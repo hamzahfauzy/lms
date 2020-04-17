@@ -1,5 +1,6 @@
 <?php
 use yii\helpers\Html;
+use yii\helpers\Url;
 
 /* (C) Copyright 2019 Heru Arief Wijaya (http://belajararief.com/) untuk Indonesia.*/
 
@@ -160,7 +161,7 @@ use yii\helpers\Html;
         <?php if(!Yii::$app->user->isGuest): ?>
             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <span class="mr-2 d-none d-lg-inline text-gray-600 small"><?= Yii::$app->user->identity->username ?></span>
-                <img class="img-profile rounded-circle" src="/assets/user-placeholder-circle.png">
+                <img class="img-profile rounded-circle" src="<?= Url::to(['/assets/user-placeholder-circle.png']) ?>">
             </a>
             <!-- Dropdown - User Information -->
             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
