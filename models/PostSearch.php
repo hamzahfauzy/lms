@@ -77,4 +77,20 @@ class PostSearch extends Post
 
         return $dataProvider;
     }
+
+    public function searchIn($post_id)
+    {
+        $query = Post::find();
+
+        // add conditions that should always apply here
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
+
+        // grid filtering conditions
+        $query->andFilterWhere(['in', 'id', $post_id]);
+
+        return $dataProvider;
+    }
 }

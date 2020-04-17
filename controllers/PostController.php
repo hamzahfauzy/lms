@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use Yii;
 use app\models\Post;
+use app\models\User;
 use app\models\PostSearch;
 use app\models\Category;
 use app\models\CategoryPost;
@@ -33,6 +34,25 @@ class PostController extends Controller
                     'remove-answer' => ['POST'],
                 ],
             ],
+            'access' => [
+                'class' => \yii\filters\AccessControl::className(),
+                'ruleConfig' => [
+                    'class' => AccessRule::className(),
+                ],
+                'rules' => [
+                    // allow authenticated users
+                    [
+                        'allow' => true,
+                        'roles' => ['Super Admin','Guru Admin'],
+                    ],
+                    [
+                        'actions' => ['index','view'],
+                        'allow' => true,
+                        'roles' => ['Guru'],
+                    ],
+                    // everything else is denied
+                ],
+            ],
         ];
     }
 
@@ -44,8 +64,30 @@ class PostController extends Controller
     {
         $searchModel = new PostSearch();
         $queryParams = Yii::$app->request->queryParams;
-        $queryParams['PostSearch']['post_author_id'] = Yii::$app->user->identity->id;
-        $dataProvider = $searchModel->search($queryParams);
+        if(Yii::$app->user->identity->level == 'Super Admin')
+            $dataProvider = $searchModel->search($queryParams);
+        if(Yii::$app->user->identity->level == 'Guru Admin')
+        {
+            $queryParams['PostSearch']['post_author_id'] = Yii::$app->user->identity->id;
+            $dataProvider = $searchModel->search($queryParams);
+        }
+        if(Yii::$app->user->identity->level == 'Guru')
+        {
+            // get guru admin
+            $guruMapel = CategoryUser::find()->where(['user_id'=>Yii::$app->user->identity->id])->all();
+            $ids = [];
+            foreach($guruMapel as $gm)
+            {
+                // get all mapel
+                $CategoryPost = CategoryPost::find()->where(['category_id'=>$gm->category_id])->all();
+                foreach($CategoryPost as $category)
+                {
+                    if($category->post->post_as == 'Soal')
+                        $ids[] = $category->post->id;
+                }
+            }
+            $dataProvider = $searchModel->searchIn($ids);
+        }
 
         return $this->render('index', [
             'searchModel' => $searchModel,

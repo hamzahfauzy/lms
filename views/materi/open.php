@@ -1,6 +1,7 @@
 <?php
 
 use yii\helpers\Html;
+use yii\helpers\Url;
 use yii\grid\GridView;
 
 /* @var $this yii\web\View */
@@ -17,13 +18,13 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php if($sub_materi > 0): ?>
     <?= $model->post_content ?>
     <?php if($prev): ?>
-    <a href="/materi/open?id=<?=$mapel->id?>&sub_materi=<?=$sub_materi-1?>" class="btn btn-primary"><< <?= $prev->post_title ?></a>
+    <a href="<?= Url::to(['/materi/open','id'=>$mapel->id,'sub_materi'=>$sub_materi-1])?>" class="btn btn-primary"><< <?= $prev->post_title ?></a>
     <?php else: ?>
-    <a href="/materi/open?id=<?=$mapel->id?>" class="btn btn-success">Pendahuluan</a>
+    <a href="<?= Url::to(['/materi/open','id'=>$mapel->id])?>" class="btn btn-success">Pendahuluan</a>
     <?php endif ?>
 
     <?php if($next): ?>
-    <a href="/materi/open?id=<?=$mapel->id?>&sub_materi=<?=++$sub_materi?>" class="btn btn-primary"><?= $next->post_title ?> >></a>
+    <a href="<?= Url::to(['/materi/open','id'=>$mapel->id,'sub_materi'=>++$sub_materi])?>" class="btn btn-primary"><?= $next->post_title ?> >></a>
     <?php else: ?>
     <a href="/materi/soal?id=<?=$mapel->id?>" class="btn btn-success">Soal</a>
     <?php endif ?>
@@ -31,6 +32,6 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php else: ?>
     <p><?= $mapel->description ?></p>
     <br>
-    <a href="/materi/open?id=<?=$mapel->id?>&sub_materi=<?=++$sub_materi?>" class="btn btn-success">Mulai</a>
+    <a href="<?= Url::to(['/materi/open','id'=>$mapel->id,'sub_materi'=>++$sub_materi])?>" class="btn btn-success">Mulai</a>
     <?php endif ?>
 </div>

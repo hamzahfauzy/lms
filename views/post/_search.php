@@ -18,7 +18,7 @@ use yii\widgets\ActiveForm;
     <?= $form->field($model, 'post_title', [
         'template' => '<div class="input-group">{input}
         <div class="input-group-append"><button class="input-group-text"><i class="fas fa-search"></i></button></div></div>{error}{hint}'
-    ])->textInput(['placeholder'=>'Cari Post...'])->label(false) ?>
+    ])->textInput(['placeholder'=>'Cari '.$post_as.'...'])->label(false) ?>
 
     <?php ActiveForm::end(); ?>
 

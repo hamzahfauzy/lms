@@ -1,5 +1,6 @@
 <?php
 use yii\helpers\Html;
+use yii\helpers\Url;
 use yii\bootstrap4\ActiveForm;
 
 /* (C) Copyright 2019 Heru Arief Wijaya (http://belajararief.com/) untuk Indonesia.*/
@@ -37,7 +38,7 @@ $directoryAsset = Yii::$app->assetManager->getPublishedUrl('@bower/startbootstra
           <div class="card-body p-0">
             <!-- Nested Row within Card Body -->
             <div class="row">
-              <div class="col-lg-6 d-none d-lg-block bg-login-image" style="background-image:url(/assets/login-bg.jpg)"></div>
+              <div class="col-lg-6 d-none d-lg-block bg-login-image" style="background-image:url(<?=Url::to(['/assets/login-bg.jpg']) ?>"></div>
               <div class="col-lg-6">
                 <div class="p-5">
                   <div class="text-center">
