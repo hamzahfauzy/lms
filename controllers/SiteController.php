@@ -9,6 +9,7 @@ use yii\web\Response;
 use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\ContactForm;
+use app\models\VwJadwal;
 
 class SiteController extends Controller
 {
@@ -53,6 +54,21 @@ class SiteController extends Controller
         ];
     }
 
+    function toHari($i)
+    {
+        $hari = [
+            "Minggu",
+            "Senin",
+            "Selasa",
+            "Rabu",
+            "Kamis",
+            "Jum'at",
+            "Sabtu"
+        ];
+
+        return $hari[$i];
+    }
+
     /**
      * Displays homepage.
      *
@@ -60,7 +76,34 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index');
+        $jadwal = VwJadwal::find()->where(['guru_id'=>Yii::$app->user->identity->guru_id])->all();
+        return $this->render('index',[
+            'jadwal' => $jadwal,
+            'adminMapel' => Yii::$app->user->identity->adminMapel,
+            'toHari' => function($i){
+                return $this->toHari($i);
+            }
+        ]);
+    }
+
+    public function actionJadwal()
+    {
+        $jadwal = VwJadwal::find()->where(['guru_id'=>Yii::$app->user->identity->guru_id])->all();
+        return $this->render('jadwal',[
+            'jadwal' => $jadwal,
+            'toHari' => function($i){
+                return $this->toHari($i);
+            }
+        ]);
+    }
+
+    public function actionMapel()
+    {
+        $mapel = Yii::$app->user->identity->adminMapel;
+        return $this->render('mapel',[
+            'adminMapel' => $mapel,
+            
+        ]);
     }
 
     /**

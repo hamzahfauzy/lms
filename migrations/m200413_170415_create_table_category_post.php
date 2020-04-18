@@ -12,11 +12,29 @@ class m200413_170415_create_table_category_post extends Migration
      */
     public function safeUp()
     {
-		$this->createTable('category_post', [
+		$this->createTable('mapel_post', [
             'id'    => $this->primaryKey(),
-            'category_id' => $this->integer()->notNull(),
+            'mapel_id' => $this->integer()->notNull(),
 			'post_id'     => $this->integer()->notNull(),
         ]);
+
+        $this->addForeignKey(
+            'fk-mapel_post-mapel_id',
+            'mapel_post',
+            'mapel_id',
+            'tbl_mapel',
+            'mapel_id',
+            'CASCADE'
+        );
+
+        $this->addForeignKey(
+            'fk-mapel_post-post_id',
+            'mapel_post',
+            'post_id',
+            'posts',
+            'id',
+            'CASCADE'
+        );
     }
 
     /**

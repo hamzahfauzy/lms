@@ -80,8 +80,31 @@ class Post extends \yii\db\ActiveRecord
         return $this->hasMany(CategoryPost::className(), ['post_id' => 'id']);
     }
 
+    public function getSubPosts()
+    {
+        return $this->hasMany(Post::className(), ['post_parent_id' => 'id']);
+    }
+
+    public function getMapelPost()
+    {
+        return $this->hasOne(MapelPost::className(), ['post_id' => 'id']);
+    }
+
     public function getAuthor()
     {
-        return $this->hasOne(User::className(), ['id' => 'post_author_id']);
+        return $this->hasOne(User::className(), ['guru_id' => 'post_author_id']);
+    }
+
+    public function getParent()
+    {
+        return $this->hasOne(Post::className(), ['id' => 'post_parent_id']);
+    }
+
+    public function meta($key = false)
+    {
+        if(!$key)
+            return PostMeta::find()->where(['post_id'=>$this->id,'meta_key'=>$key])->one()->meta_value;
+        return PostMeta::find()->where(['post_id'=>$this->id])->all();
+        
     }
 }

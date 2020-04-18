@@ -8,7 +8,7 @@ use yii\grid\GridView;
 /* @var $model app\models\Post */
 $post_as = $_GET['post_as'];
 $this->title = $model->post_title;
-$this->params['breadcrumbs'][] = ['label' => $post_as == 'Soal' ? 'Bank Soal' : $post_as, 'url' => ['index','PostSearch[post_as]'=>$post_as]];
+$this->params['breadcrumbs'][] = ['label' => $post_as == 'Soal' ? 'Bank Soal' : $post_as, 'url' => ['index','id'=>$model->mapelPost->mapel_id,'PostSearch[post_as]'=>$post_as]];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 $columns = [
@@ -44,7 +44,7 @@ $columns = [
     ],
 ];
 
-if(in_array(Yii::$app->user->identity->level,['Guru']))
+if(!Yii::$app->user->identity->adminMapel)
 $columns = [
     ['class' => 'yii\grid\SerialColumn'],
     'post_content:raw',
@@ -63,7 +63,7 @@ $columns = [
 
 
     <p>
-        <?= Html::a('<i class="fas fa-pencil-alt"></i> Update', ['update', 'id' => $model->id, 'post_as' => $post_as], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a('<i class="fas fa-pencil-alt"></i> Update', ['update', 'id' => $_GET['id'],'model_id'=>$model->id, 'post_as' => $post_as], ['class' => 'btn btn-primary']) ?>
         <?= Html::a('<i class="fas fa-trash"></i> Hapus', ['delete', 'id' => $model->id], [
             'class' => 'btn btn-danger',
             'data' => [
@@ -81,7 +81,7 @@ $columns = [
                 'format' => 'raw',
                 'label' => 'Mata Pelajaran',
                 'value' => function($model){
-                    return $model->categoryPosts[0]->category->name;
+                    return $model->mapelPost->mapel->mapel_nama;
                 },
             ],
             'post_content:raw',
@@ -98,7 +98,7 @@ $columns = [
         ],
     ]) ?>
 
-    <?php if($post_as == 'Soal' && in_array(Yii::$app->user->identity->level,['Super Admin','Guru Admin'])){ ?>
+    <?php if($post_as == 'Soal' && Yii::$app->user->identity->adminMapel){ ?>
     <br>
     <h1 class="h3 mb-0 text-gray-800">Jawaban</h1>
     <p>

@@ -78,7 +78,7 @@ class PostSearch extends Post
         return $dataProvider;
     }
 
-    public function searchIn($post_id)
+    public function searchIn($post_id, $params)
     {
         $query = Post::find();
 
@@ -88,8 +88,32 @@ class PostSearch extends Post
             'query' => $query,
         ]);
 
+        $this->load($params);
+
+        if (!$this->validate()) {
+            // uncomment the following line if you do not want to return any records when validation fails
+            // $query->where('0=1');
+            return $dataProvider;
+        }
+
         // grid filtering conditions
-        $query->andFilterWhere(['in', 'id', $post_id]);
+        $query->andFilterWhere([
+            'post_author_id' => $this->post_author_id,
+            'post_status' => $this->post_status,
+            'post_parent_id' => $this->post_parent_id,
+            'comment_status' => $this->comment_status,
+            'comment_count' => $this->comment_count,
+            'post_date' => $this->post_date,
+            'post_modified' => $this->post_modified,
+        ]);
+
+        $query->andFilterWhere(['like', 'post_title', $this->post_title])
+            ->andFilterWhere(['like', 'post_content', $this->post_content])
+            ->andFilterWhere(['like', 'post_excerpt', $this->post_excerpt])
+            ->andFilterWhere(['like', 'post_as', $this->post_as])
+            ->andFilterWhere(['like', 'post_type', $this->post_type])
+            ->andFilterWhere(['like', 'post_mime_type', $this->post_mime_type])
+            ->andFilterWhere(['in', 'id', $post_id]);
 
         return $dataProvider;
     }

@@ -28,15 +28,6 @@ class m200413_165618_create_table_posts extends Migration
 			'post_date'		 => $this->integer()->notNull(),
 			'post_modified'  => $this->integer()->notNull(),
         ]);
-
-        $this->addForeignKey(
-            'fk-posts-post_author_id',
-            'posts',
-            'post_author_id',
-            'user',
-            'id',
-            'CASCADE'
-        );
     }
 
     /**

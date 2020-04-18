@@ -5,7 +5,7 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model app\models\Post */
 $post_as = $_GET['post_as'];
-$this->title = 'Buat '.$post_as;
+$this->title = 'Buat '.$post_as.' '.$mapel->mapel_nama;
 $this->params['breadcrumbs'][] = ['label' => $post_as == 'Soal' ? 'Bank Soal' : $post_as, 'url' => ['index','PostSearch[post_as]'=>$post_as]];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
@@ -13,6 +13,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?= $this->render('_form', [
         'model' => $model,
+        'topik' => $topik,
         'mapel' => $mapel
     ]) ?>
 

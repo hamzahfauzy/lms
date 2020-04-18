@@ -5,23 +5,23 @@ namespace app\models;
 use Yii;
 
 /**
- * This is the model class for table "category_post".
+ * This is the model class for table "mapel_post".
  *
  * @property int $id
- * @property int $category_id
+ * @property int $mapel_id
  * @property int $post_id
  *
- * @property Category $category
+ * @property TblMapel $mapel
  * @property Post $post
  */
-class CategoryPost extends \yii\db\ActiveRecord
+class MapelPost extends \yii\db\ActiveRecord
 {
     /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
-        return 'category_post';
+        return 'mapel_post';
     }
 
     /**
@@ -30,9 +30,9 @@ class CategoryPost extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['category_id', 'post_id'], 'required'],
-            [['category_id', 'post_id'], 'integer'],
-            [['category_id'], 'exist', 'skipOnError' => true, 'targetClass' => Category::className(), 'targetAttribute' => ['category_id' => 'id']],
+            [['mapel_id', 'post_id'], 'required'],
+            [['mapel_id', 'post_id'], 'integer'],
+            [['mapel_id'], 'exist', 'skipOnError' => true, 'targetClass' => TblMapel::className(), 'targetAttribute' => ['mapel_id' => 'mapel_id']],
             [['post_id'], 'exist', 'skipOnError' => true, 'targetClass' => Post::className(), 'targetAttribute' => ['post_id' => 'id']],
         ];
     }
@@ -44,19 +44,19 @@ class CategoryPost extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'category_id' => 'Category ID',
+            'mapel_id' => 'Mapel ID',
             'post_id' => 'Post ID',
         ];
     }
 
     /**
-     * Gets query for [[Category]].
+     * Gets query for [[Mapel]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getCategory()
+    public function getMapel()
     {
-        return $this->hasOne(Category::className(), ['id' => 'category_id']);
+        return $this->hasOne(TblMapel::className(), ['mapel_id' => 'mapel_id']);
     }
 
     /**

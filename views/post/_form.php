@@ -7,8 +7,6 @@ use yii\widgets\ActiveForm;
 /* @var $model app\models\Post */
 /* @var $form yii\widgets\ActiveForm */
 $model->post_status = empty($model->post_status) ? 1 : $model->post_status;
-$category = isset($model->categoryPosts[0]) ? $model->categoryPosts[0] : [];
-$category = !empty($category) ? $category->category_id : 0;
 ?>
 <script src="https://cdn.ckeditor.com/4.14.0/standard-all/ckeditor.js"></script>
 <div class="post-form">
@@ -16,19 +14,15 @@ $category = !empty($category) ? $category->category_id : 0;
     <?php $form = ActiveForm::begin(); ?>
 
     <?= $form->field($model, 'post_as')->hiddenInput(['value' => $_GET['post_as']])->label(false) ?>
-    <?= $form->field($model, 'post_author_id')->hiddenInput(['value' => Yii::$app->user->identity->id])->label(false) ?>
+    <?= $form->field($model, 'post_author_id')->hiddenInput(['value' => Yii::$app->user->identity->guru_id])->label(false) ?>
     <?= $form->field($model, 'post_type')->hiddenInput(['value' => 'post'])->label(false) ?>
+    <?= $form->field($model, 'post_status')->hiddenInput(['value' => 1])->label(false) ?>
 
     <?= $form->field($model, 'post_title')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'post_content')->textarea(['id' => 'editor1']) ?>
 
-    <?= $form->field($model, 'post_status')->dropDownList(['1'=>'Publish','2'=>'Draft'],['prompt'=>'- Status -']); ?>
-    
-    <div class="form-group">
-        <label>Mata Pelajaran</label>
-        <?= Html::dropDownList('category',$category,$mapel,['prompt'=>'- Pilih Mata Pelajaran -','class'=>'form-control']); ?>
-    </div>
+    <?= $form->field($model, 'post_parent_id')->dropDownList($topik,['prompt'=>'- Pilih Topik Pelajaran -'])->label('Topik'); ?>
 
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>

@@ -8,7 +8,7 @@ use yii\grid\GridView;
 /* @var $model app\models\Post */
 $post_as = 'Materi';
 $this->title = $model->post_title;
-$this->params['breadcrumbs'][] = ['label' => 'Mata Pelajaran', 'url' => ['category/index']];
+$this->params['breadcrumbs'][] = ['label' => 'Mata Pelajaran', 'url' => ['site/mapel']];
 $this->params['breadcrumbs'][] = ['label' => $post_as, 'url' => ['index','id'=>$mapel_id]];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
@@ -20,8 +20,8 @@ $columns = [
         'contentOptions' => ['style' => 'white-space: nowrap;'],
         'format' => 'raw',
         'label' => 'Title',
-        'value' => function($model){
-            return Html::a($model->post_title,['sub-materi-view','id'=>$model->id]);
+        'value' => function($model, $key, $index){
+            return Html::a($model->post_title,['open','id'=>$model->post_parent_id,'sub_materi'=>$index+1]);
         },
     ],
     'post_excerpt:raw',
@@ -48,7 +48,7 @@ $columns = [
     ],
 ];
 
-if(in_array(Yii::$app->user->identity->level,['Guru']))
+if(Yii::$app->user->identity->guru_id != $model->mapelPost->mapel_id)
 $columns = [
     ['class' => 'yii\grid\SerialColumn'],
     [
@@ -56,25 +56,17 @@ $columns = [
         'contentOptions' => ['style' => 'white-space: nowrap;'],
         'format' => 'raw',
         'label' => 'Title',
-        'value' => function($model){
-            return Html::a($model->post_title,['sub-materi-view','id'=>$model->id]);
+        'value' => function($model, $key, $index){
+            return Html::a($model->post_title,['open','id'=>$model->post_parent_id,'sub_materi'=>$index+1]);
         },
     ],
     'post_excerpt:raw',
-    [
-        'attribute' => 'post_as',
-        'format' => 'raw',
-        'label' => 'Status',
-        'value' => function($model){
-            return $model->post_as;
-        },
-    ],
     
 ];
 ?>
 <div class="post-view">
 
-
+    <?php if(Yii::$app->user->identity->guru_id == $model->mapelPost->mapel_id){ ?>
     <p>
         <?= Html::a('<i class="fas fa-pencil-alt"></i> Update', ['update', 'id' => $model->id, 'post_as' => $post_as, 'mapel_id'=>$mapel_id], ['class' => 'btn btn-primary']) ?>
         <?= Html::a('<i class="fas fa-trash"></i> Hapus', ['delete', 'id' => $model->id, 'mapel_id'=>$mapel_id], [
@@ -85,6 +77,7 @@ $columns = [
             ],
         ]) ?>
     </p>
+    <?php } ?>
 
     <?= DetailView::widget([
         'model' => $model,
@@ -94,7 +87,7 @@ $columns = [
                 'format' => 'raw',
                 'label' => 'Mata Pelajaran',
                 'value' => function($model){
-                    return $model->categoryPosts[0]->category->name;
+                    return $model->mapelPost->mapel->mapel_nama;
                 },
             ],
             'post_content:raw',
@@ -114,9 +107,11 @@ $columns = [
     <?php if($post_as == 'Materi'){ ?>
     <br>
     <h1 class="h3 mb-0 text-gray-800">Sub Materi</h1>
+    <?php if(Yii::$app->user->identity->guru_id == $model->mapelPost->mapel_id){ ?>
     <p>
         <?= Html::a('<i class="fas fa-plus-alt"></i> Tambah Sub Materi', ['create-sub-materi', 'materi_id' => $model->id, 'mapel_id' => $mapel_id], ['class' => 'btn btn-success']) ?>
     </p>
+    <?php } ?>
     <div class="table-responsive">
     <?= GridView::widget([
         'dataProvider' => $dataProvider,

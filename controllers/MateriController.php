@@ -5,8 +5,10 @@ namespace app\controllers;
 use Yii;
 use app\models\Post;
 use app\models\PostSearch;
-use app\models\Category;
-use app\models\CategoryPost;
+use app\models\PostMeta;
+use app\models\MapelPost;
+use app\models\TblElMapel;
+use app\models\TblMapel;
 use yii\data\ActiveDataProvider;
 use app\components\AccessRule;
 use yii\web\Controller;
@@ -38,7 +40,7 @@ class MateriController extends \yii\web\Controller
                     // allow authenticated users
                     [
                         'allow' => true,
-                        'roles' => ['Super Admin','Guru Admin'],
+                        'roles' => ['Guru Admin'],
                     ],
                     [
                         'actions' => ['index','view','open'],
@@ -53,13 +55,11 @@ class MateriController extends \yii\web\Controller
 
     public function actionIndex($id)
     {
-        $categoryPost = CategoryPost::find()->where(["category_id"=>$id])->all();
+        $mapel = TblMapel::findOne($id);
         $ids = [];
-        foreach($categoryPost as $cat_post)
-        {
-            if($cat_post->post->post_as == 'Materi')
-                $ids[] = $cat_post->post_id;
-        }
+        foreach($mapel->mapelPosts as $mapel_post)
+            if($mapel_post->post->post_as == 'Materi')
+                $ids[] = $mapel_post->post_id;
 
         $query = Post::find()->where(['in','id',$ids]);
         $dataProvider = new ActiveDataProvider([
@@ -69,8 +69,9 @@ class MateriController extends \yii\web\Controller
 
         return $this->render('index', [
             'dataProvider' => $dataProvider,
-            'mapel'        => Category::findOne($id),
+            'mapel'        => $mapel,
             'mapel_id'     => $id,
+            'is_admin'     => $mapel->guru_admin_id == Yii::$app->user->identity->guru_id
         ]);
     }
 
@@ -96,13 +97,12 @@ class MateriController extends \yii\web\Controller
 
     public function actionOpen($id,$sub_materi=0)
     {
-        $categoryPost = CategoryPost::find()->where(["category_id"=>$id])->all();
+        // $mapel = TblMapel::findOne($id);
+        $materi = Post::findOne($id);
         $ids = [];
-        foreach($categoryPost as $cat_post)
-        {
-            if($cat_post->post->post_as == 'Materi')
-                $ids[] = $cat_post->post_id;
-        }
+        foreach($materi->subPosts as $sub_post)
+            if($sub_post->post_as == 'Sub Materi')
+                $ids[] = $sub_post->id;
 
         $model = [];
         $index = $sub_materi-1;
@@ -116,7 +116,7 @@ class MateriController extends \yii\web\Controller
             'sub_materi' => $sub_materi,
             'next' => $next,
             'prev' => $prev,
-            'mapel' => Category::findOne($id)
+            'mapel' => $materi->mapelPost->mapel
         ]);
     }
 
@@ -125,6 +125,24 @@ class MateriController extends \yii\web\Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
+    public function actionEdit($id)
+    {
+        $model = TblElMapel::findOne($id);
+        if(!$model)
+            $model = new TblElMapel;
+
+        $model->mapel_id = $id;
+
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect(['index', 'id' => $id]);
+        }
+
+        return $this->render('edit', [
+            'model' => $model,
+        ]);
+
+    }
+
     public function actionCreate($mapel_id)
     {
         $model = new Post();
@@ -134,10 +152,10 @@ class MateriController extends \yii\web\Controller
             $model->post_excerpt = $this->strWordCut($model->post_content,100);
             $model->post_date = strtotime(date("Y-m-d H:i:s"));
             $model->post_modified = strtotime(date("Y-m-d H:i:s"));
-            if($model->save(false)) 
+            if($model->save()) 
             {
-                $CategoryPost = new CategoryPost;
-                $CategoryPost->category_id = $request['category'];
+                $CategoryPost = new MapelPost;
+                $CategoryPost->mapel_id = $request['category'];
                 $CategoryPost->post_id = $model->id;
                 $CategoryPost->save();
                 return $this->redirect(['view', 'id' => $model->id,'mapel_id'=>$mapel_id,'post_as'=>$model->post_as]);
@@ -160,10 +178,10 @@ class MateriController extends \yii\web\Controller
             $model->post_excerpt = $this->strWordCut($model->post_content,100);
             $model->post_date = strtotime(date("Y-m-d H:i:s"));
             $model->post_modified = strtotime(date("Y-m-d H:i:s"));
-            if($model->save(false)) 
+            if($model->save()) 
             {
-                $CategoryPost = new CategoryPost;
-                $CategoryPost->category_id = $request['category'];
+                $CategoryPost = new MapelPost;
+                $CategoryPost->mapel_id = $request['category'];
                 $CategoryPost->post_id = $model->id;
                 $CategoryPost->save();
                 return $this->redirect(['view', 'id' => $model->post_parent_id,'post_as'=>'Materi','mapel_id'=>$mapel_id]);
@@ -188,10 +206,10 @@ class MateriController extends \yii\web\Controller
             $model->post_excerpt = $this->strWordCut($model->post_content,100);
             $model->post_date = strtotime(date("Y-m-d H:i:s"));
             $model->post_modified = strtotime(date("Y-m-d H:i:s"));
-            if($model->save(false)) 
+            if($model->save()) 
             {
-                $CategoryPost = new CategoryPost;
-                $CategoryPost->category_id = $request['category'];
+                $CategoryPost = new MapelPost;
+                $CategoryPost->mapel_id = $request['category'];
                 $CategoryPost->post_id = $model->id;
                 $CategoryPost->save();
                 return $this->redirect(['view', 'id' => $model->post_parent_id,'post_as'=>'Materi','mapel_id'=>$mapel_id]);
@@ -221,7 +239,7 @@ class MateriController extends \yii\web\Controller
             $request = Yii::$app->request->post();
             $model->post_excerpt = $this->strWordCut($model->post_content,100);
             $model->post_modified = strtotime(date("Y-m-d H:i:s"));
-            if($model->save(false))
+            if($model->save())
                 return $this->redirect(['view', 'id' => $model->id, 'post_as' => $model->post_as, 'mapel_id' => $mapel_id]);
         }
 

@@ -6,9 +6,8 @@ use Yii;
 use app\models\Post;
 use app\models\User;
 use app\models\PostSearch;
-use app\models\Category;
-use app\models\CategoryPost;
-use app\models\CategoryUser;
+use app\models\MapelPost;
+use app\models\TblMapel;
 use yii\data\ActiveDataProvider;
 use app\components\AccessRule;
 use yii\web\Controller;
@@ -43,7 +42,7 @@ class PostController extends Controller
                     // allow authenticated users
                     [
                         'allow' => true,
-                        'roles' => ['Super Admin','Guru Admin'],
+                        'roles' => ['Guru Admin'],
                     ],
                     [
                         'actions' => ['index','view'],
@@ -60,34 +59,18 @@ class PostController extends Controller
      * Lists all Post models.
      * @return mixed
      */
-    public function actionIndex()
+    public function actionIndex($id)
     {
+        $mapelPost = MapelPost::find()->where(['mapel_id'=>$id])->all();
+        $ids = [];
+        foreach($mapelPost as $mapel_post)
+        {
+            if($mapel_post->post->post_as == 'Soal')
+                $ids[] = $mapel_post->post_id;
+        }
         $searchModel = new PostSearch();
         $queryParams = Yii::$app->request->queryParams;
-        if(Yii::$app->user->identity->level == 'Super Admin')
-            $dataProvider = $searchModel->search($queryParams);
-        if(Yii::$app->user->identity->level == 'Guru Admin')
-        {
-            $queryParams['PostSearch']['post_author_id'] = Yii::$app->user->identity->id;
-            $dataProvider = $searchModel->search($queryParams);
-        }
-        if(Yii::$app->user->identity->level == 'Guru')
-        {
-            // get guru admin
-            $guruMapel = CategoryUser::find()->where(['user_id'=>Yii::$app->user->identity->id])->all();
-            $ids = [];
-            foreach($guruMapel as $gm)
-            {
-                // get all mapel
-                $CategoryPost = CategoryPost::find()->where(['category_id'=>$gm->category_id])->all();
-                foreach($CategoryPost as $category)
-                {
-                    if($category->post->post_as == 'Soal')
-                        $ids[] = $category->post->id;
-                }
-            }
-            $dataProvider = $searchModel->searchIn($ids);
-        }
+        $dataProvider = $searchModel->searchIn($ids, $queryParams);
 
         return $this->render('index', [
             'searchModel' => $searchModel,
@@ -101,15 +84,15 @@ class PostController extends Controller
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($id)
+    public function actionView($id,$model_id)
     {
-        $jawabans = Post::find()->where(['post_parent_id'=>$id,'post_as'=>'Jawaban']);
+        $jawabans = Post::find()->where(['post_parent_id'=>$model_id,'post_as'=>'Jawaban']);
         $dataProvider = new ActiveDataProvider([
             'query' => $jawabans,
         ]);
 
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => $this->findModel($model_id),
             'dataProvider' => $dataProvider
         ]);
     }
@@ -119,20 +102,21 @@ class PostController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate()
+    public function actionCreate($id)
     {
         $model = new Post();
-        $mapel = $this->mapel();
+        $mapel = TblMapel::findOne($id);
+        $topik = $this->topik($id);
 
         $request = Yii::$app->request->post();
-        if ($model->load(Yii::$app->request->post()) && !empty($request['category'])){
+        if ($model->load(Yii::$app->request->post())){
             $model->post_excerpt = $this->strWordCut($model->post_content,100);
             $model->post_date = strtotime(date("Y-m-d H:i:s"));
             $model->post_modified = strtotime(date("Y-m-d H:i:s"));
             if($model->save(false)) 
             {
-                $CategoryPost = new CategoryPost;
-                $CategoryPost->category_id = $request['category'];
+                $CategoryPost = new MapelPost;
+                $CategoryPost->mapel_id = $id;
                 $CategoryPost->post_id = $model->id;
                 $CategoryPost->save();
                 return $this->redirect(['view', 'id' => $model->id,'post_as'=>$model->post_as]);
@@ -141,6 +125,7 @@ class PostController extends Controller
 
         return $this->render('create', [
             'model' => $model,
+            'topik' => $topik,
             'mapel' => $mapel
         ]);
     }
@@ -152,29 +137,31 @@ class PostController extends Controller
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate($id)
+    public function actionUpdate($id,$model_id)
     {
-        $model = $this->findModel($id);
-        $mapel = $this->mapel();
+        $model = $this->findModel($model_id);
+        $mapel = TblMapel::findOne($id);
+        $topik = $this->topik($id);
 
         $request = Yii::$app->request->post();
-        if ($model->load(Yii::$app->request->post()) && !empty($request['category'])){
+        if ($model->load(Yii::$app->request->post())){
             $model->post_excerpt = $this->strWordCut($model->post_content,100);
             $model->post_modified = strtotime(date("Y-m-d H:i:s"));
             if($model->save(false))
             {
-                CategoryPost::deleteAll(['post_id'=>$model->id]);
+                MapelPost::deleteAll(['post_id'=>$model->id]);
 
-                $CategoryPost = new CategoryPost;
-                $CategoryPost->category_id = $request['category'];
+                $CategoryPost = new MapelPost;
+                $CategoryPost->mapel_id = $id;
                 $CategoryPost->post_id = $model->id;
                 $CategoryPost->save();
-                return $this->redirect(['view', 'id' => $model->id, 'post_as' => $model->post_as]);
+                return $this->redirect(['view', 'id' => $id, 'model_id'=>$model->id, 'post_as' => $model->post_as]);
             }
         }
 
         return $this->render('update', [
             'model' => $model,
+            'topik' => $topik,
             'mapel' => $mapel
         ]);
     }
@@ -190,7 +177,7 @@ class PostController extends Controller
             $answer->post_date = strtotime(date("Y-m-d H:i:s"));
             $answer->post_modified = strtotime(date("Y-m-d H:i:s"));
             if($answer->save(false))
-                return $this->redirect(['view', 'id' => $model->id, 'post_as' => $model->post_as]);
+                return $this->redirect(['view', 'id'=>$model->mapelPost->mapel_id, 'model_id' => $model->id, 'post_as' => $model->post_as]);
         }
 
         return $this->render('answer', [
@@ -209,7 +196,7 @@ class PostController extends Controller
             $answer->post_excerpt = $this->strWordCut($answer->post_content,100);
             $answer->post_modified = strtotime(date("Y-m-d H:i:s"));
             if($answer->save(false))
-                return $this->redirect(['view', 'id' => $model->id, 'post_as' => $model->post_as]);
+                return $this->redirect(['view', 'id' => $model->mapelPost->mapel_id, 'model_id' => $model->id, 'post_as' => $model->post_as]);
         }
 
         return $this->render('update-answer', [
@@ -255,7 +242,7 @@ class PostController extends Controller
         $model->post_status = $model->post_status == 1 ? 0 : 1;
         $model->save(false);
 
-        return $this->redirect(['view','id'=>$model->post_parent_id,'post_as'=>'Soal']);
+        return $this->redirect(['view', 'model_id' => $model->post_parent_id, 'id'=>$model->mapelPost->mapel_id,'post_as'=>'Soal']);
     }
 
     /**
@@ -274,19 +261,15 @@ class PostController extends Controller
         throw new NotFoundHttpException('The requested page does not exist.');
     }
 
-    function mapel()
+    function topik($id)
     {
-        $mapel = Category::find()->all();
-        if(Yii::$app->user->identity->level != 'Super Admin')
-        {
-            $categoryUser = CategoryUser::find()->where(['user_id'=>Yii::$app->user->identity->id])->all();
-            $ids = [];
-            foreach($categoryUser as $category)
-                $ids[] = $category->category_id;
-            
-            $mapel = Category::find()->where(['in','id',$ids])->all();
-        }
-        return ArrayHelper::map($mapel,'id','name');
+        $topik = TblMapel::findOne($id);
+        $ids = [];
+        foreach($topik->mapelPosts as $mapel_post)
+            if($mapel_post->post->post_as == 'Materi')
+                $ids[] = $mapel_post->post_id;
+        $mapel = Post::find()->where(['in','id',$ids])->all();
+        return ArrayHelper::map($mapel,'id','post_title');
     }
 
     function strWordCut($string,$length,$end='....')

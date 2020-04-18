@@ -13,7 +13,7 @@ use yii\widgets\ActiveForm;
     <?= $form->field($answer, 'post_author_id')->hiddenInput(['value' => Yii::$app->user->identity->id])->label(false) ?>
     <?= $form->field($answer, 'post_parent_id')->hiddenInput(['value' => $model->id])->label(false) ?>
     <?= $form->field($answer, 'post_type')->hiddenInput(['value' => 'post'])->label(false) ?>
-    <?= $form->field($answer, 'post_status')->hiddenInput(['value' => 0])->label(false) ?>
+    <?= $form->field($answer, 'post_status')->hiddenInput()->label(false) ?>
     <?= $form->field($answer, 'post_title')->hiddenInput(['value' => 'Jawaban'])->label(false) ?>
 
     <?= $form->field($answer, 'post_content')->textarea(['id' => 'editor1'])->label("Jawaban") ?>
