@@ -8,7 +8,7 @@ use yii\widgets\ActiveForm;
 /* @var $form yii\widgets\ActiveForm */
 $this->title = "Edit Deskripsi";
 ?>
-<div class="post-form">
+<div class="post-form" style="background-color:#FFF !important;box-shadow: 0 .15rem 1.75rem 0 rgba(58,59,69,.15)!important;padding:15px;">
 
     <?php $form = ActiveForm::begin(); ?>
 

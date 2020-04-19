@@ -44,25 +44,26 @@ $columns = [
     ],
 ];
 
-if(!Yii::$app->user->identity->adminMapel)
+if($model->mapelPost->mapel->guru_admin_id != Yii::$app->user->identity->guru_id)
 $columns = [
     ['class' => 'yii\grid\SerialColumn'],
     'post_content:raw',
     [
-        'attribute' => 'post_as',
+        'attribute' => 'post_status',
         'format' => 'raw',
         'label' => 'Status',
-        'value' => function($model){
-            return $model->post_as;
+        'value' => function($model) use ($post_as){
+            return $model->post_status ? '<span class="badge badge-success">Jawaban benar</span>' : '<span class="badge badge-danger">Jawaban salah</span>';
         },
     ],
     
 ];
 ?>
-<div class="post-view">
+<div class="post-view" style="background-color:#FFF !important;box-shadow: 0 .15rem 1.75rem 0 rgba(58,59,69,.15)!important;padding:15px;">
 
 
     <p>
+        <?php if($model->mapelPost->mapel->guru_admin_id == Yii::$app->user->identity->guru_id){ ?>
         <?= Html::a('<i class="fas fa-pencil-alt"></i> Update', ['update', 'id' => $_GET['id'],'model_id'=>$model->id, 'post_as' => $post_as], ['class' => 'btn btn-primary']) ?>
         <?= Html::a('<i class="fas fa-trash"></i> Hapus', ['delete', 'id' => $model->id], [
             'class' => 'btn btn-danger',
@@ -71,6 +72,7 @@ $columns = [
                 'method' => 'post',
             ],
         ]) ?>
+        <?php } ?>
     </p>
 
     <?= DetailView::widget([
@@ -98,12 +100,14 @@ $columns = [
         ],
     ]) ?>
 
-    <?php if($post_as == 'Soal' && Yii::$app->user->identity->adminMapel){ ?>
+    <?php if($post_as == 'Soal'){ ?>
     <br>
     <h1 class="h3 mb-0 text-gray-800">Jawaban</h1>
+    <?php if($model->mapelPost->mapel->guru_admin_id == Yii::$app->user->identity->guru_id){ ?>
     <p>
         <?= Html::a('<i class="fas fa-plus-alt"></i> Tambah Jawaban', ['answer', 'id' => $model->id], ['class' => 'btn btn-success']) ?>
     </p>
+    <?php } ?>
     <div class="table-responsive">
     <?= GridView::widget([
         'dataProvider' => $dataProvider,

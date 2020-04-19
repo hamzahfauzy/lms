@@ -9,7 +9,7 @@ $this->title = 'Buat '.$post_as.' '.$mapel->mapel_nama;
 $this->params['breadcrumbs'][] = ['label' => $post_as == 'Soal' ? 'Bank Soal' : $post_as, 'url' => ['index','PostSearch[post_as]'=>$post_as]];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="post-create">
+<div class="post-create" style="background-color:#FFF !important;box-shadow: 0 .15rem 1.75rem 0 rgba(58,59,69,.15)!important;padding:15px;">
 
     <?= $this->render('_form', [
         'model' => $model,

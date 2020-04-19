@@ -22,9 +22,9 @@ $category = !empty($category) ? $category->category_id : 0;
     <?= $form->field($model, 'post_parent_id')->hiddenInput(['value' => $materi_id])->label(false) ?>
     <?= Html::hiddenInput('category',$mapel_id) ?>
 
-    <?= $form->field($model, 'post_title')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'post_title')->textInput(['maxlength' => true])->label('Judul') ?>
 
-    <?= $form->field($model, 'post_content')->textarea(['id' => 'editor1']) ?>
+    <?= $form->field($model, 'post_content')->textarea(['id' => 'editor1'])->label('Deskripsi') ?>
 
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>

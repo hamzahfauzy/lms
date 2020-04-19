@@ -113,7 +113,7 @@ class PostSearch extends Post
             ->andFilterWhere(['like', 'post_as', $this->post_as])
             ->andFilterWhere(['like', 'post_type', $this->post_type])
             ->andFilterWhere(['like', 'post_mime_type', $this->post_mime_type])
-            ->andFilterWhere(['in', 'id', $post_id]);
+            ->andWhere(['in', 'id', $post_id]);
 
         return $dataProvider;
     }

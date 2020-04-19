@@ -9,7 +9,7 @@ use yii\grid\GridView;
 $post_as = 'Materi';
 $this->title = $model->post_title;
 $this->params['breadcrumbs'][] = ['label' => 'Mata Pelajaran', 'url' => ['site/mapel']];
-$this->params['breadcrumbs'][] = ['label' => $post_as, 'url' => ['index','id'=>$mapel_id]];
+$this->params['breadcrumbs'][] = ['label' => 'Topik', 'url' => ['index','id'=>$mapel_id]];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 
@@ -19,12 +19,19 @@ $columns = [
         'attribute' => 'post_title',
         'contentOptions' => ['style' => 'white-space: nowrap;'],
         'format' => 'raw',
-        'label' => 'Title',
+        'label' => 'Judul',
         'value' => function($model, $key, $index){
             return Html::a($model->post_title,['open','id'=>$model->post_parent_id,'sub_materi'=>$index+1]);
         },
     ],
-    'post_excerpt:raw',
+    [
+        'attribute' => 'post_excerpt',
+        'format' => 'raw',
+        'label' => 'Ringkasan',
+        'value' => function($model){
+            return $model->post_excerpt;
+        },
+    ],
     [
         'class'    => 'yii\grid\ActionColumn',
         'contentOptions' => ['style' => 'white-space: nowrap;'],
@@ -60,7 +67,14 @@ $columns = [
             return Html::a($model->post_title,['open','id'=>$model->post_parent_id,'sub_materi'=>$index+1]);
         },
     ],
-    'post_excerpt:raw',
+    [
+        'attribute' => 'post_excerpt',
+        'format' => 'raw',
+        'label' => 'Ringkasan',
+        'value' => function($model){
+            return $model->post_excerpt;
+        },
+    ],
     
 ];
 ?>
@@ -106,10 +120,10 @@ $columns = [
 
     <?php if($post_as == 'Materi'){ ?>
     <br>
-    <h1 class="h3 mb-0 text-gray-800">Sub Materi</h1>
+    <h1 class="h3 mb-0 text-gray-800">Materi</h1>
     <?php if(Yii::$app->user->identity->guru_id == $model->mapelPost->mapel_id){ ?>
     <p>
-        <?= Html::a('<i class="fas fa-plus-alt"></i> Tambah Sub Materi', ['create-sub-materi', 'materi_id' => $model->id, 'mapel_id' => $mapel_id], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('<i class="fas fa-plus-alt"></i> Tambah Materi', ['create-sub-materi', 'materi_id' => $model->id, 'mapel_id' => $mapel_id], ['class' => 'btn btn-success']) ?>
     </p>
     <?php } ?>
     <div class="table-responsive">

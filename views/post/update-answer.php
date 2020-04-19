@@ -10,7 +10,7 @@ $this->params['breadcrumbs'][] = ['label' => 'Bank Soal', 'url' => ['index','Pos
 $this->params['breadcrumbs'][] = ['label' => $model->post_title, 'url' => ['view', 'id' => $model->id,'post_as'=>'Soal']];
 $this->params['breadcrumbs'][] = 'Update Jawaban';
 ?>
-<div class="post-update">
+<div class="post-update" style="background-color:#FFF !important;box-shadow: 0 .15rem 1.75rem 0 rgba(58,59,69,.15)!important;padding:15px;">
     <?= $this->render('_form-answer', [
         'model' => $model,
         'answer' => $answer

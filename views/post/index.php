@@ -72,7 +72,7 @@ $columns = [
         ]
     ],
 ];
-if(!Yii::$app->user->identity->adminMapel)
+if($mapel[0]->mapel->guru_admin_id != Yii::$app->user->identity->guru_id)
 $columns = [
     ['class' => 'yii\grid\SerialColumn'],
 
@@ -80,26 +80,41 @@ $columns = [
     [
         'attribute' => 'post_title',
         'format' => 'raw',
-        'label' => 'Title',
+        'label' => 'Judul',
         'value' => function($model){
-            return Html::a($model->post_title,['post/view','id'=>$model->id,'post_as'=>$model->post_as]);
+            return Html::a($model->post_title,['post/view','id'=>$_GET['id'],'model_id'=>$model->id,'post_as'=>$model->post_as]);
         },
     ],
-    'post_excerpt:raw',
+    [
+        'attribute' => 'post_excerpt',
+        'format' => 'raw',
+        'label' => 'Ringkasan',
+        'value' => function($model){
+            return $model->post_excerpt;
+        },
+    ],
+    [
+        'attribute' => 'post_parent_id',
+        'format' => 'raw',
+        'label' => 'Topik',
+        'value' => function($model){
+            return $model->parent->post_title;
+        },
+    ],
     [
         'attribute' => 'post_author_id',
         'format' => 'raw',
-        'label' => 'Mata Pelajaran',
+        'label' => 'Author',
         'value' => function($model){
-            return $model->categoryPosts[0]->category->name;
+            return $model->author->guru_nama;
         },
-    ]
+    ],
 ];
 ?>
-<div class="post-index">
+<div class="post-index" style="background-color:#FFF !important;box-shadow: 0 .15rem 1.75rem 0 rgba(58,59,69,.15)!important;padding:15px;">
 
     <p>
-    <?php if(Yii::$app->user->identity->adminMapel){ ?>
+    <?php if($mapel[0]->mapel->guru_admin_id == Yii::$app->user->identity->guru_id){ ?>
         <?= Html::a('Buat '.$post_as, ['create','id'=>$_GET['id'], 'post_as'=>$post_as], ['class' => 'btn btn-success']) ?>
     <?php } ?>
     </p>

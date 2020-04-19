@@ -3,11 +3,11 @@
 /* @var $this yii\web\View */
 use yii\helpers\Url;
 
-$this->title = 'LMS Dashboard';
+$this->title = 'Jadwal';
 ?>
 <div class="site-index">
 
-    <div class="body-content">
+    <div class="body-content" style="background-color:#FFF !important;box-shadow: 0 .15rem 1.75rem 0 rgba(58,59,69,.15)!important;padding:15px;">
 
         <div class="row">
             <div class="col-lg-12">
@@ -28,12 +28,12 @@ $this->title = 'LMS Dashboard';
                 <?php }foreach($jadwal as $key => $j){ ?>
                 <tr>
                     <td><?= ++$key ?></td>
-                    <td><?= $j->mapel_nama ?></td>
+                    <td><a href="<?= Url::to(['materi/index','id'=>$j->mapel_id])?>"><?= $j->mapel_nama ?></a></td>
                     <td><?= $j->kelas ?></td>
                     <td><?= $toHari($j->hari) ?></td>
                     <td><?= $j->jam ?></td>
                     <td>
-                        <a href="<?= Url::to(['materi/index','id'=>$j->mapel_id]) ?>"><i class="fas fa-eye"></i> View</a>
+                        <a href="<?= Url::to(['site/view-jadwal','id'=>$j->mapel_id]) ?>"><i class="fas fa-eye"></i> View</a>
                     </td>
                 </tr>
                 <?php } ?>

@@ -73,6 +73,7 @@ class PostController extends Controller
         $dataProvider = $searchModel->searchIn($ids, $queryParams);
 
         return $this->render('index', [
+            'mapel'       => $mapelPost,
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
@@ -106,6 +107,8 @@ class PostController extends Controller
     {
         $model = new Post();
         $mapel = TblMapel::findOne($id);
+        if($mapel->guru_admin_id != Yii::$app->user->identity->guru_id)
+            return $this->redirect(Yii::$app->request->referrer ?: Yii::$app->homeUrl);
         $topik = $this->topik($id);
 
         $request = Yii::$app->request->post();
@@ -119,7 +122,7 @@ class PostController extends Controller
                 $CategoryPost->mapel_id = $id;
                 $CategoryPost->post_id = $model->id;
                 $CategoryPost->save();
-                return $this->redirect(['view', 'id' => $model->id,'post_as'=>$model->post_as]);
+                return $this->redirect(['view', 'id'=>$id, 'model_id' => $model->id,'post_as'=>$model->post_as]);
             }
         }
 

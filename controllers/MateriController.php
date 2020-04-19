@@ -112,6 +112,7 @@ class MateriController extends \yii\web\Controller
             $model = Post::findOne($ids[$index]);
         
         return $this->render('open', [
+            'all'   => Post::find()->where(['in','id',$ids])->all(),
             'model' => $model,
             'sub_materi' => $sub_materi,
             'next' => $next,
@@ -127,6 +128,10 @@ class MateriController extends \yii\web\Controller
      */
     public function actionEdit($id)
     {
+        $mapel = TblMapel::findOne($id);
+        if($mapel->guru_admin_id != Yii::$app->user->identity->guru_id)
+            return $this->redirect(Yii::$app->request->referrer ?: Yii::$app->homeUrl);
+
         $model = TblElMapel::findOne($id);
         if(!$model)
             $model = new TblElMapel;
