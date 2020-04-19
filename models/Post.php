@@ -42,7 +42,7 @@ class Post extends \yii\db\ActiveRecord
         return [
             [['post_author_id', 'post_date', 'post_modified'], 'required'],
             [['post_author_id', 'post_status', 'post_parent_id', 'comment_status', 'comment_count', 'post_date', 'post_modified'], 'integer'],
-            [['post_content', 'post_excerpt'], 'string'],
+            [['post_content', 'post_excerpt','post_order'], 'string'],
             [['post_title', 'post_as', 'post_type', 'post_mime_type'], 'string', 'max' => 255],
         ];
     }

@@ -61,7 +61,7 @@ class MateriController extends \yii\web\Controller
             if($mapel_post->post->post_as == 'Materi')
                 $ids[] = $mapel_post->post_id;
 
-        $query = Post::find()->where(['in','id',$ids]);
+        $query = Post::find()->where(['in','id',$ids])->orderby(['post_order'=>SORT_ASC]);
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
@@ -83,6 +83,11 @@ class MateriController extends \yii\web\Controller
      */
     public function actionView($id, $mapel_id)
     {
+        if(isset($_GET['mode']) && $_GET['mode'] == 'ajax')
+        {
+            $model = Post::find()->where(['post_parent_id'=>$id,'post_as'=>'Sub Materi'])->orderBy(['post_order'=>SORT_ASC])->asArray()->all();
+            return json_encode($model);
+        }
         $jawabans = Post::find()->where(['post_parent_id'=>$id,'post_as'=>'Sub Materi']);
         $dataProvider = new ActiveDataProvider([
             'query' => $jawabans,
@@ -163,7 +168,7 @@ class MateriController extends \yii\web\Controller
                 $CategoryPost->mapel_id = $request['category'];
                 $CategoryPost->post_id = $model->id;
                 $CategoryPost->save();
-                return $this->redirect(['view', 'id' => $model->id,'mapel_id'=>$mapel_id,'post_as'=>$model->post_as]);
+                return $this->redirect(['index', 'id' => $mapel_id]);
             }
         }
 
@@ -189,7 +194,7 @@ class MateriController extends \yii\web\Controller
                 $CategoryPost->mapel_id = $request['category'];
                 $CategoryPost->post_id = $model->id;
                 $CategoryPost->save();
-                return $this->redirect(['view', 'id' => $model->post_parent_id,'post_as'=>'Materi','mapel_id'=>$mapel_id]);
+                return $this->redirect(['index', 'id'=>$mapel_id]);
             }
         }
 
@@ -217,7 +222,7 @@ class MateriController extends \yii\web\Controller
                 $CategoryPost->mapel_id = $request['category'];
                 $CategoryPost->post_id = $model->id;
                 $CategoryPost->save();
-                return $this->redirect(['view', 'id' => $model->post_parent_id,'post_as'=>'Materi','mapel_id'=>$mapel_id]);
+                return $this->redirect(['index', 'id'=>$mapel_id]);
             }
         }
 
@@ -245,7 +250,7 @@ class MateriController extends \yii\web\Controller
             $model->post_excerpt = $this->strWordCut($model->post_content,100);
             $model->post_modified = strtotime(date("Y-m-d H:i:s"));
             if($model->save())
-                return $this->redirect(['view', 'id' => $model->id, 'post_as' => $model->post_as, 'mapel_id' => $mapel_id]);
+                return $this->redirect(['index', 'id' => $mapel_id]);
         }
 
         return $this->render('update', [
@@ -264,7 +269,7 @@ class MateriController extends \yii\web\Controller
     public function actionDelete($id, $mapel_id)
     {
         $this->findModel($id)->delete();
-        return $this->redirect(['index','mapel_id'=>$mapel_id]);
+        return $this->redirect(['index','id'=>$mapel_id]);
     }
 
     public function actionRemoveSubMateri($id, $mapel_id)
@@ -272,7 +277,7 @@ class MateriController extends \yii\web\Controller
         $model = $this->findModel($id);
         $materi_id = $model->post_parent_id;
         $model->delete();
-        return $this->redirect(['view','id'=>$materi_id,'mapel_id'=>$mapel_id]);
+        return $this->redirect(['index', 'id'=>$mapel_id]);
     }
 
     /**

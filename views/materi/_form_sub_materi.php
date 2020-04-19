@@ -26,6 +26,8 @@ $category = !empty($category) ? $category->category_id : 0;
 
     <?= $form->field($model, 'post_content')->textarea(['id' => 'editor1'])->label('Deskripsi') ?>
 
+    <?= $form->field($model, 'post_order')->textInput()->label('No. Urut'); ?>
+
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
     </div>
