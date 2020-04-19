@@ -29,7 +29,7 @@ class TblElMapel extends \yii\db\ActiveRecord
         return [
             [['mapel_id'], 'required'],
             [['mapel_id'], 'integer'],
-            [['deskripsi', 'capaian_pembelajaran'], 'string', 'max' => 45],
+            [['deskripsi', 'capaian_pembelajaran'], 'string'],
             [['mapel_id'], 'unique'],
         ];
     }
