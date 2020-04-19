@@ -105,7 +105,8 @@ class MateriController extends \yii\web\Controller
         // $mapel = TblMapel::findOne($id);
         $materi = Post::findOne($id);
         $ids = [];
-        foreach($materi->getSubPosts()->orderBy(['post_order'=>SORT_ASC])->all() as $sub_post)
+        $all = $materi->getSubPosts()->orderBy(['post_order'=>SORT_ASC])->all();
+        foreach($all as $sub_post)
             if($sub_post->post_as == 'Sub Materi')
                 $ids[] = $sub_post->id;
 
@@ -117,7 +118,7 @@ class MateriController extends \yii\web\Controller
             $model = Post::findOne($ids[$index]);
         
         return $this->render('open', [
-            'all'   => $materi->getSubPosts()->orderBy(['post_order'=>SORT_ASC])->all(),
+            'all'   => $all,
             'model' => $model,
             'sub_materi' => $sub_materi,
             'next' => $next,
