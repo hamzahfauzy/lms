@@ -33,7 +33,7 @@ $this->title = 'Jadwal';
                     <td><?= $toHari($j->hari) ?></td>
                     <td><?= $j->jam ?></td>
                     <td>
-                        <a href="<?= Url::to(['site/view-jadwal','id'=>$j->mapel_id]) ?>"><i class="fas fa-eye"></i> View</a>
+                        <a href="<?= Url::to(['site/view-jadwal','id'=>$j->jadwal_id]) ?>"><i class="fas fa-eye"></i> View</a>
                     </td>
                 </tr>
                 <?php } ?>
