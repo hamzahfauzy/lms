@@ -117,7 +117,7 @@ class MateriController extends \yii\web\Controller
             $model = Post::findOne($ids[$index]);
         
         return $this->render('open', [
-            'all'   => Post::find()->where(['in','id',$ids])->all(),
+            'all'   => $materi->getSubPosts()->orderBy(['post_order'=>SORT_ASC])->all(),
             'model' => $model,
             'sub_materi' => $sub_materi,
             'next' => $next,
