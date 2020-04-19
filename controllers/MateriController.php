@@ -105,7 +105,7 @@ class MateriController extends \yii\web\Controller
         // $mapel = TblMapel::findOne($id);
         $materi = Post::findOne($id);
         $ids = [];
-        foreach($materi->subPosts as $sub_post)
+        foreach($materi->getSubPosts()->orderBy(['post_order',SORT_ASC])->get() as $sub_post)
             if($sub_post->post_as == 'Sub Materi')
                 $ids[] = $sub_post->id;
 
