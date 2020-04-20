@@ -248,6 +248,78 @@ class PostController extends Controller
         return $this->redirect(['view', 'model_id' => $model->post_parent_id, 'id'=>$model->mapelPost->mapel_id,'post_as'=>'Soal']);
     }
 
+    public function actionImport()
+    {
+        if(isset($_FILES['file']))
+        {
+            $fileName = $_FILES['file']['tmp_name'];
+            $data = \moonland\phpexcel\Excel::import($fileName);
+            foreach($data as $d){
+                $model = new Post();
+                $model->post_author_id = Yii::$app->user->identity->guru_id;
+                $model->post_as = 'Soal';
+                $model->post_title = $d['Judul'];
+                $model->post_content = $d['Deskripsi'];
+                $model->post_excerpt = $this->strWordCut($model->post_content,100);
+                $model->post_date = strtotime(date("Y-m-d H:i:s"));
+                $model->post_modified = strtotime(date("Y-m-d H:i:s"));
+                if($model->save(false)) 
+                {
+                    $mapelPost = new MapelPost;
+                    $mapelPost->mapel_id = $_POST['id'];
+                    $mapelPost->post_id = $model->id;
+                    $mapelPost->save();
+                    
+                    $jawaban = new Post;
+                    $jawaban->post_parent_id = $model->id;
+                    $jawaban->post_as = 'Jawaban';
+                    $jawaban->post_author_id = Yii::$app->user->identity->guru_id;
+                    $jawaban->post_title = $d['Jawaban A'];
+                    if($d['Jawaban Benar'] == 'A')
+                        $jawaban->post_status = 1;
+                    $jawaban->save(false);
+
+                    $jawaban = new Post;
+                    $jawaban->post_parent_id = $model->id;
+                    $jawaban->post_as = 'Jawaban';
+                    $jawaban->post_author_id = Yii::$app->user->identity->guru_id;
+                    $jawaban->post_title = $d['Jawaban B'];
+                    if($d['Jawaban Benar'] == 'B')
+                        $jawaban->post_status = 1;
+                    $jawaban->save(false);
+
+                    $jawaban = new Post;
+                    $jawaban->post_parent_id = $model->id;
+                    $jawaban->post_as = 'Jawaban';
+                    $jawaban->post_author_id = Yii::$app->user->identity->guru_id;
+                    $jawaban->post_title = $d['Jawaban C'];
+                    if($d['Jawaban Benar'] == 'C')
+                        $jawaban->post_status = 1;
+                    $jawaban->save(false);
+
+                    $jawaban = new Post;
+                    $jawaban->post_parent_id = $model->id;
+                    $jawaban->post_as = 'Jawaban';
+                    $jawaban->post_author_id = Yii::$app->user->identity->guru_id;
+                    $jawaban->post_title = $d['Jawaban D'];
+                    if($d['Jawaban Benar'] == 'D')
+                        $jawaban->post_status = 1;
+                    $jawaban->save(false);
+
+                    $jawaban = new Post;
+                    $jawaban->post_parent_id = $model->id;
+                    $jawaban->post_as = 'Jawaban';
+                    $jawaban->post_author_id = Yii::$app->user->identity->guru_id;
+                    $jawaban->post_title = $d['Jawaban E'];
+                    if($d['Jawaban Benar'] == 'E')
+                        $jawaban->post_status = 1;
+                    $jawaban->save(false);
+                }
+            }
+            return $this->redirect(['index', 'id'=>$_POST['id'],'PostSearch[post_as]'=>'Soal']);
+        }
+    }
+
     /**
      * Finds the Post model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.

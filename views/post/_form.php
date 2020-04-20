@@ -34,7 +34,7 @@ $model->post_status = empty($model->post_status) ? 1 : $model->post_status;
 <script>
     CKEDITOR.replace('editor1', {
       extraPlugins: 'embed,autoembed,image2',
-      height: 500,
+      height: 250,
 
       // Load the default contents.css file plus customizations for this sample.
       contentsCss: [

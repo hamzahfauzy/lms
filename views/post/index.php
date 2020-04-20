@@ -35,7 +35,7 @@ $columns = [
         'format' => 'raw',
         'label' => 'Topik',
         'value' => function($model){
-            return $model->parent->post_title;
+            return $model->parent ? $model->parent->post_title : '<i>Tidak ada</i>';
         },
     ],
     [
@@ -98,7 +98,7 @@ $columns = [
         'format' => 'raw',
         'label' => 'Topik',
         'value' => function($model){
-            return $model->parent->post_title;
+            return $model->parent ? $model->parent->post_title : '<i>Tidak ada</i>';
         },
     ],
     [
@@ -116,6 +116,14 @@ $columns = [
     <p>
     <?php if($mapel[0]->mapel->guru_admin_id == Yii::$app->user->identity->guru_id){ ?>
         <?= Html::a('Buat '.$post_as, ['create','id'=>$_GET['id'], 'post_as'=>$post_as], ['class' => 'btn btn-success']) ?>
+        <?php if($post_as == 'Soal'){ ?>
+            <a href="javascript:void(0)" class="btn btn-primary" onclick="file.click()">Import Soal</a>
+            <form method="post" action="<?= Url::to(['post/import']) ?>" id="form" enctype="multipart/form-data">
+            <input type="hidden" name="_csrf" value="<?=Yii::$app->request->getCsrfToken()?>" />
+            <input type="hidden" name="id" value="<?= $_GET['id']?>">
+            <input type="file" name="file" id="file" style="display:none" accept=".csv" onchange="if(confirm('apakah anda yakin akan mengimport soal ?')) form.submit()">
+            </form>
+        <?php } ?>
     <?php } ?>
     </p>
 
