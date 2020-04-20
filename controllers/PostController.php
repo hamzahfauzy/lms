@@ -219,9 +219,10 @@ class PostController extends Controller
     {
         $model = $this->findModel($id);
         $post_as = $model->post_as;
+        $mapel_id = $model->mapelPost->mapel_id;
         $model->delete();
 
-        return $this->redirect(['index','PostSearch[post_as]'=>$post_as]);
+        return $this->redirect(['index','id'=>$mapel_id,'PostSearch[post_as]'=>$post_as]);
     }
 
     public function actionRemoveAnswer($id)
@@ -269,14 +270,16 @@ class PostController extends Controller
                     $mapelPost->mapel_id = $_POST['id'];
                     $mapelPost->post_id = $model->id;
                     $mapelPost->save();
-                    
+
                     $jawaban = new Post;
                     $jawaban->post_parent_id = $model->id;
                     $jawaban->post_as = 'Jawaban';
                     $jawaban->post_author_id = Yii::$app->user->identity->guru_id;
                     $jawaban->post_title = $d['Jawaban A'];
-                    if($d['Jawaban Benar'] == 'A')
-                        $jawaban->post_status = 1;
+                    $jawaban->post_content = $d['Jawaban A'];
+                    $jawaban->post_excerpt = $this->strWordCut($model->post_content,100);
+                    $post_status = $d['Jawaban Benar'] === 'A' ? 1 : 0;
+                    $jawaban->post_status = $post_status;
                     $jawaban->save(false);
 
                     $jawaban = new Post;
@@ -284,8 +287,10 @@ class PostController extends Controller
                     $jawaban->post_as = 'Jawaban';
                     $jawaban->post_author_id = Yii::$app->user->identity->guru_id;
                     $jawaban->post_title = $d['Jawaban B'];
-                    if($d['Jawaban Benar'] == 'B')
-                        $jawaban->post_status = 1;
+                    $jawaban->post_content = $d['Jawaban B'];
+                    $jawaban->post_excerpt = $this->strWordCut($model->post_content,100);
+                    $post_status = $d['Jawaban Benar'] === 'B' ? 1 : 0;
+                    $jawaban->post_status = $post_status;
                     $jawaban->save(false);
 
                     $jawaban = new Post;
@@ -293,8 +298,10 @@ class PostController extends Controller
                     $jawaban->post_as = 'Jawaban';
                     $jawaban->post_author_id = Yii::$app->user->identity->guru_id;
                     $jawaban->post_title = $d['Jawaban C'];
-                    if($d['Jawaban Benar'] == 'C')
-                        $jawaban->post_status = 1;
+                    $jawaban->post_content = $d['Jawaban C'];
+                    $jawaban->post_excerpt = $this->strWordCut($model->post_content,100);
+                    $post_status = $d['Jawaban Benar'] === 'C' ? 1 : 0;
+                    $jawaban->post_status = $post_status;
                     $jawaban->save(false);
 
                     $jawaban = new Post;
@@ -302,8 +309,10 @@ class PostController extends Controller
                     $jawaban->post_as = 'Jawaban';
                     $jawaban->post_author_id = Yii::$app->user->identity->guru_id;
                     $jawaban->post_title = $d['Jawaban D'];
-                    if($d['Jawaban Benar'] == 'D')
-                        $jawaban->post_status = 1;
+                    $jawaban->post_content = $d['Jawaban D'];
+                    $jawaban->post_excerpt = $this->strWordCut($model->post_content,100);
+                    $post_status = $d['Jawaban Benar'] === 'D' ? 1 : 0;
+                    $jawaban->post_status = $post_status;
                     $jawaban->save(false);
 
                     $jawaban = new Post;
@@ -311,8 +320,10 @@ class PostController extends Controller
                     $jawaban->post_as = 'Jawaban';
                     $jawaban->post_author_id = Yii::$app->user->identity->guru_id;
                     $jawaban->post_title = $d['Jawaban E'];
-                    if($d['Jawaban Benar'] == 'E')
-                        $jawaban->post_status = 1;
+                    $jawaban->post_content = $d['Jawaban E'];
+                    $jawaban->post_excerpt = $this->strWordCut($model->post_content,100);
+                    $post_status = $d['Jawaban Benar'] === 'E' ? 1 : 0;
+                    $jawaban->post_status = $post_status;
                     $jawaban->save(false);
                 }
             }
