@@ -255,6 +255,7 @@ class PostController extends Controller
         {
             $fileName = $_FILES['file']['tmp_name'];
             $data = \moonland\phpexcel\Excel::import($fileName);
+            $data = $data[0];
             foreach($data as $d){
                 $model = new Post();
                 $model->post_author_id = Yii::$app->user->identity->guru_id;

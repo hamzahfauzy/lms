@@ -121,7 +121,7 @@ $columns = [
             <form method="post" action="<?= Url::to(['post/import']) ?>" id="form" enctype="multipart/form-data">
             <input type="hidden" name="_csrf" value="<?=Yii::$app->request->getCsrfToken()?>" />
             <input type="hidden" name="id" value="<?= $_GET['id']?>">
-            <input type="file" name="file" id="file" style="display:none" accept=".csv" onchange="if(confirm('apakah anda yakin akan mengimport soal ?')) form.submit()">
+            <input type="file" name="file" id="file" style="display:none" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" onchange="if(confirm('apakah anda yakin akan mengimport soal ?')) form.submit()">
             </form>
         <?php } ?>
     <?php } ?>
