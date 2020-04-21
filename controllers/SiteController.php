@@ -308,7 +308,8 @@ class SiteController extends Controller
     public function actionDeleteFile($id)
     {
         $model = Post::findOne($id);
-        unlink($model->post_content);
+        if(file_exists($model->post_content))
+            unlink($model->post_content);
         $model->delete();
         return $this->redirect(['site/gallery']);
     }
