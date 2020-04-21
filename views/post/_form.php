@@ -1,6 +1,7 @@
 <?php
 
 use yii\helpers\Html;
+use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
@@ -48,7 +49,9 @@ $model->post_status = empty($model->post_status) ? 1 : $model->post_status;
       // resizer (because image size is controlled by widget styles or the image takes maximum
       // 100% of the editor width).
       image2_alignClasses: ['image-align-left', 'image-align-center', 'image-align-right'],
-      image2_disableResizer: true
+      image2_disableResizer: true,
+      filebrowserUploadUrl: "<?= Url::to(['image-upload'])?>",
+      filebrowserUploadMethod:"form"
     });
     
 </script>

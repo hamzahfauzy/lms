@@ -14,6 +14,7 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
+use yii\helpers\Url;
 
 /**
  * PostController implements the CRUD actions for Post model.
@@ -53,6 +54,15 @@ class PostController extends Controller
                 ],
             ],
         ];
+    }
+
+    public function beforeAction($action)
+    {            
+        if ($action->id == 'image-upload') {
+            $this->enableCsrfValidation = false;
+        }
+
+        return parent::beforeAction($action);
     }
 
     /**
@@ -372,5 +382,27 @@ class PostController extends Controller
             $string = substr($stringCut, 0, strrpos($stringCut, ' ')).$end;
         }
         return $string;
+    }
+
+    function actionImageUpload()
+    {
+        if(isset($_FILES['upload']['name']))
+        {
+            $file = $_FILES['upload']['tmp_name'];
+            $file_name = $_FILES['upload']['name'];
+            $file_name_array = explode(".", $file_name);
+            $extension = end($file_name_array);
+            $new_image_name = rand() . '.' . $extension;
+            chmod('uploads', 0777);
+            $allowed_extension = array("jpg", "gif", "png");
+            if(in_array($extension, $allowed_extension))
+            {
+                move_uploaded_file($file, 'uploads/' . $new_image_name);
+                $function_number = $_GET['CKEditorFuncNum'];
+                $url = Url::to(['uploads/' . $new_image_name]);
+                $message = '';
+                echo "<script type='text/javascript'>window.parent.CKEDITOR.tools.callFunction($function_number, '$url', '$message');</script>";
+            }
+        }
     }
 }
