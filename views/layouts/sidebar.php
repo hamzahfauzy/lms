@@ -24,7 +24,7 @@ use hoaaah\sbadmin2\widgets\Menu;
             'active' => $this->context->route == 'jadwal/index'
         ],
         [
-            'label' => 'Gallery',
+            'label' => 'File Manager',
             'url' => ['site/gallery'], //  Array format of Url to, will be not used if have an items
             'icon' => 'fas fa-fw fa-photo-video', // optional, default to "fa fa-circle-o
             'visible' => true, // optional, default to true

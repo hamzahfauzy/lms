@@ -280,18 +280,27 @@ class SiteController extends Controller
             $extension = end($file_name_array);
             $new_image_name = rand() . '.' . $extension;
             // chmod('uploads', 0777);
-            $allowed_extension = array("jpg", "gif", "png");
+            $allowed_extension = array("jpg", 'jpeg', "gif", "png", "pdf");
             if(in_array($extension, $allowed_extension))
             {
                 move_uploaded_file($file, 'uploads/' . $new_image_name);
                 $post = new Post;
                 $post->post_content = 'uploads/' . $new_image_name;
                 $post->post_author_id = Yii::$app->user->identity->guru_id;
-                $post->post_as = 'Gambar';
+                if(in_array($extension, array("jpg", 'jpeg', "gif", "png")))
+                    $post->post_as = 'Gambar';
+                else
+                    $post->post_as = 'Document';
                 $post->post_type = 'Media';
                 $post->save(false);
                 return $this->redirect(['site/gallery']);
             }
         }
+    }
+
+    public function actionDeleteFile($id)
+    {
+        Post::findOne($id)->delete();
+        return $this->redirect(['site/gallery']);
     }
 }
