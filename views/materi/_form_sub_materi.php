@@ -52,7 +52,9 @@ $category = !empty($category) ? $category->category_id : 0;
       // resizer (because image size is controlled by widget styles or the image takes maximum
       // 100% of the editor width).
       image2_alignClasses: ['image-align-left', 'image-align-center', 'image-align-right'],
-      image2_disableResizer: true
+      image2_disableResizer: true,
+      filebrowserUploadUrl: "<?= Url::to(['image-upload'])?>",
+      filebrowserUploadMethod:"form"
     });
     
 </script>
