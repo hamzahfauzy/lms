@@ -283,24 +283,33 @@ class SiteController extends Controller
             $allowed_extension = array("jpg", 'jpeg', "gif", "png", "pdf");
             if(in_array($extension, $allowed_extension))
             {
-                move_uploaded_file($file, 'uploads/' . $new_image_name);
-                $post = new Post;
-                $post->post_content = 'uploads/' . $new_image_name;
-                $post->post_author_id = Yii::$app->user->identity->guru_id;
-                if(in_array($extension, array("jpg", 'jpeg', "gif", "png")))
+                if(move_uploaded_file($file, 'uploads/' . $new_image_name))
+                {
+                    $post = new Post;
+                    $post->post_title = $file_name;
+                    $post->post_content = 'uploads/' . $new_image_name;
+                    $post->post_author_id = Yii::$app->user->identity->guru_id;
+                    if(in_array($extension, array("jpg", 'jpeg', "gif", "png")))
                     $post->post_as = 'Gambar';
-                else
+                    else
                     $post->post_as = 'Document';
-                $post->post_type = 'Media';
-                $post->save(false);
-                return $this->redirect(['site/gallery']);
+                    $post->post_type = 'Media';
+                    $post->save(false);
+                    $message = "success";
+                }
+                else $message = "warning";
+                Yii::$app->session->setFlash('status', $message);
+                return Yii::$app->getResponse()->redirect(['site/gallery']);
+                // return $this->redirect(['site/gallery','msg'=>$message]);
             }
         }
     }
 
     public function actionDeleteFile($id)
     {
-        Post::findOne($id)->delete();
+        $model = Post::findOne($id);
+        unlink($model->post_content);
+        $model->delete();
         return $this->redirect(['site/gallery']);
     }
 }

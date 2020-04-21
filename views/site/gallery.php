@@ -3,6 +3,7 @@
 /* @var $this yii\web\View */
 use yii\helpers\Url;
 
+
 $this->title = 'File Manager';
 ?>
 <div class="site-index">
@@ -13,6 +14,12 @@ $this->title = 'File Manager';
             <input type="hidden" name="_csrf" value="<?=Yii::$app->request->getCsrfToken()?>" />
             <input type="file" name="file" id="file" style="display:none" accept=".jpg, .jpeg, .gif, .png, .pdf" onchange="if(confirm('apakah anda yakin akan mengupload file ini ?')) form.submit()">
         </form>
+        <?php if(Yii::$app->session->hasFlash('status')): $msg = Yii::$app->session->getFlash('status');?>
+            <p></p>
+            <div class="alert alert-<?=$msg?>">
+                Upload <?= $msg == 'success' ? 'Berhasil' : 'Gagal' ?>
+            </div>
+        <?php endif; ?>
         <p></p>
         <?php if(empty($gallery)){ echo "<center><i>Tidak ada data</i></center>"; } ?>
         <div class="row text-center text-lg-left">
@@ -26,7 +33,7 @@ $this->title = 'File Manager';
                 <?php } ?>
                 </a>
                 <center>
-                <br>
+                <a href="<?= Url::to([$g->post_content]) ?>"><?= $g->post_title ? $g->post_title : str_replace('uploads/','',$g->post_content) ?></a><br>
                 <button class="btn btn-success" onclick="copyText('<?= Url::base(true) ?>/<?=$g->post_content?>', this)">Salin Link</button>
                 <a href="<?= Url::to([$g->post_content]) ?>" class="btn btn-warning"><i class="fas fa-cloud-download-alt"></i></a>
                 <a href="<?= Url::to(['delete-file','id'=>$g->id]) ?>" data-method="post" data-confirm="apakah anda yakin akan menghapus file ini ?" class="btn btn-danger"><i class="fas fa-trash"></i></a>
