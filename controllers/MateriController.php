@@ -342,6 +342,12 @@ class MateriController extends \yii\web\Controller
             {
                 move_uploaded_file($file, 'uploads/' . $new_image_name);
                 $function_number = $_GET['CKEditorFuncNum'];
+                $post = new Post;
+                $post->post_content = 'uploads/' . $new_image_name;
+                $post->post_author_id = Yii::$app->user->identity->guru_id;
+                $post->post_as = 'Gambar';
+                $post->post_type = 'Media';
+                $post->save(false);
                 $url = Url::to(['uploads/' . $new_image_name]);
                 $message = '';
                 echo "<script type='text/javascript'>window.parent.CKEDITOR.tools.callFunction($function_number, '$url', '$message');</script>";

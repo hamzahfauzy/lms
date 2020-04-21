@@ -24,6 +24,13 @@ use hoaaah\sbadmin2\widgets\Menu;
             'active' => $this->context->route == 'jadwal/index'
         ],
         [
+            'label' => 'Gallery',
+            'url' => ['site/gallery'], //  Array format of Url to, will be not used if have an items
+            'icon' => 'fas fa-fw fa-photo-video', // optional, default to "fa fa-circle-o
+            'visible' => true, // optional, default to true
+            'active' => $this->context->route == 'site/gallery'
+        ],
+        [
             'label' => 'Pengaturan',
             'url' => ['site/setting'], //  Array format of Url to, will be not used if have an items
             'icon' => 'fas fa-fw fa-cog', // optional, default to "fa fa-circle-o

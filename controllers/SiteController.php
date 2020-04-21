@@ -261,4 +261,37 @@ class SiteController extends Controller
     {
         return $this->render('about');
     }
+
+    public function actionGallery()
+    {
+        $gallery = Post::find()->where(['post_type'=>'Media','post_author_id'=>Yii::$app->user->identity->guru_id])->all();
+        return $this->render('gallery',[
+            'gallery' => $gallery
+        ]);
+    }
+
+    function actionUpload()
+    {
+        if(isset($_FILES['file']['name']))
+        {
+            $file = $_FILES['file']['tmp_name'];
+            $file_name = $_FILES['file']['name'];
+            $file_name_array = explode(".", $file_name);
+            $extension = end($file_name_array);
+            $new_image_name = rand() . '.' . $extension;
+            // chmod('uploads', 0777);
+            $allowed_extension = array("jpg", "gif", "png");
+            if(in_array($extension, $allowed_extension))
+            {
+                move_uploaded_file($file, 'uploads/' . $new_image_name);
+                $post = new Post;
+                $post->post_content = 'uploads/' . $new_image_name;
+                $post->post_author_id = Yii::$app->user->identity->guru_id;
+                $post->post_as = 'Gambar';
+                $post->post_type = 'Media';
+                $post->save(false);
+                return $this->redirect(['site/gallery']);
+            }
+        }
+    }
 }
