@@ -393,7 +393,7 @@ class PostController extends Controller
             $file_name_array = explode(".", $file_name);
             $extension = end($file_name_array);
             $new_image_name = rand() . '.' . $extension;
-            chmod('uploads', 0777);
+            // chmod('uploads', 0777);
             $allowed_extension = array("jpg", "gif", "png");
             if(in_array($extension, $allowed_extension))
             {
