@@ -12,6 +12,7 @@ use app\models\ContactForm;
 use app\models\MapelPost;
 use app\models\TblMapel;
 use app\models\Post;
+use app\models\PostMeta;
 use app\models\Tugas;
 use app\models\VwJadwal;
 use app\models\VwKelas;
@@ -109,6 +110,21 @@ class SiteController extends Controller
         if(isset($_GET['page']))
         {
             if($_GET['page'] == 'tugas')
+            {   
+                $additionalModel = Post::find()->where(['post_excerpt'=>$jadwal->jadwal_id])->all();
+            }
+            else if($_GET['page'] == 'update-tugas')
+            {
+                $mapelPost = MapelPost::find()->where(['mapel_id'=>$jadwal->mapel_id])->all();
+                $ids = [];
+                foreach($mapelPost as $mapel_post)
+                    if($mapel_post->post->post_as == 'Materi')
+                        $ids[] = $mapel_post->post_id;
+                
+                $additionalModel = Post::find()->where(['in','id',$ids])->all();
+                $additionalModel = ['model'=>Post::findOne($_GET['model_id']),'topik'=>$additionalModel];
+            }
+            else if($_GET['page'] == 'create-tugas')
             {
                 $mapelPost = MapelPost::find()->where(['mapel_id'=>$jadwal->mapel_id])->all();
                 $ids = [];
@@ -134,6 +150,31 @@ class SiteController extends Controller
                 return $this->toHari($i);
             }
         ]);
+    }
+
+    public function actionCreateTugas()
+    {
+        $post = new Post;
+        $post->post_title = $_POST['post_title'];
+        $post->post_content = $_POST['post_content'];
+        $post->post_author_id = Yii::$app->user->identity->guru_id;
+        $post->post_parent_id = $_POST['category'];
+        $post->post_excerpt = $_POST['jadwal_id'];
+        $post->post_as = 'Tugas';
+        $post->post_type = 'Post';
+        if($post->save(false))
+        {
+            foreach($_POST['meta'] as $key => $value)
+            {
+                $postMeta = new PostMeta;
+                $postMeta->post_id = $post->id;
+                $postMeta->meta_key = $key;
+                $postMeta->meta_value = $value;
+                $postMeta->save();
+            }
+            return $this->redirect(['site/view-jadwal','id'=>$_POST['jadwal_id'],'page'=>'tugas']);
+        }
+
     }
 
     public function actionMapel()
@@ -166,29 +207,69 @@ class SiteController extends Controller
         
         $mapel = TblMapel::findOne($id);
         $jadwal = VwJadwal::find()->where(['jadwal_id'=>$jadwal_id])->one();
-        $materi = Post::findOne($materi_id);
+        $tugas = Post::findOne($materi_id);
+        $materi = Post::findOne($tugas->post_parent_id);
         $tugas = Tugas::find()->where(['materi_id'=>$materi_id,'jadwal_id'=>$jadwal_id])->all();
         $ids = [];
         foreach($tugas as $t)
             $ids[] = $t->soal_id;
-        $soal = Post::find()->where(['post_parent_id'=>$materi_id,'post_as'=>'Soal'])->andWhere(['not in','id',$ids])->all();
+        $soal = Post::find()->where(['post_parent_id'=>$materi->id,'post_as'=>'Soal'])->andWhere(['not in','id',$ids])->all();
         if (Yii::$app->request->post()){
-            $model = new Tugas;
-            $model->materi_id = $materi_id;
-            $model->jadwal_id = $jadwal_id;
-            $model->soal_id   = $_GET['soal_id'];
-            if($model->save()) 
-                return $this->redirect(['tugas','id'=>$id,'materi_id'=>$materi_id,'jadwal_id'=>$jadwal_id]);
+            foreach($_POST['soal'] as $soal)
+            {
+                $model = new Tugas;
+                $model->materi_id = $materi_id;
+                $model->jadwal_id = $jadwal_id;
+                $model->soal_id   = $soal;
+                $model->save();
+            }
+            return $this->redirect(['tugas','id'=>$id,'materi_id'=>$materi_id,'jadwal_id'=>$jadwal_id]);
         }
 
         return $this->render('add-tugas', [
             'soal' => $soal,
             'mapel' => $mapel,
             'materi' => $materi,
+            'materi_id' => $materi_id,
             'jadwal' => $jadwal,
             'id'     => $id,
         ]);
 
+    }
+
+    public function actionUpdateTugas()
+    {
+        if(isset($_POST['post_title']))
+        {
+            $id = $_POST['id'];
+            $post = Post::findOne($id);
+            $post->post_title = $_POST['post_title'];
+            $post->post_content = $_POST['post_content'];
+            $post->post_author_id = Yii::$app->user->identity->guru_id;
+            $post->post_parent_id = $_POST['category'];
+            $post->post_excerpt = $_POST['jadwal_id'];
+            $post->post_as = 'Tugas';
+            $post->post_type = 'Post';
+            if($post->save(false))
+            {
+                postMeta::deleteAll(['post_id'=>$id]);
+                foreach($_POST['meta'] as $key => $value)
+                {
+                    $postMeta = new PostMeta;
+                    $postMeta->post_id = $post->id;
+                    $postMeta->meta_key = $key;
+                    $postMeta->meta_value = $value;
+                    $postMeta->save();
+                }
+                return $this->redirect(['site/view-jadwal','id'=>$_POST['jadwal_id'],'page'=>'tugas']);
+            }
+        }
+    }
+
+    public function actionRemoveTugas($id,$jadwal_id)
+    {
+        Post::findOne($id)->delete();
+        return $this->redirect(['view-jadwal','id'=>$jadwal_id,'page'=>'tugas']);
     }
 
     public function actionDeleteTugas($id)
@@ -197,7 +278,7 @@ class SiteController extends Controller
         $materi = $tugas->materi;
         $jadwal_id = $tugas->jadwal_id;
         $tugas->delete();
-        return $this->redirect(['tugas','id'=>$materi->mapelPost->mapel_id,'materi_id'=>$materi->id,'jadwal_id'=>$jadwal_id]);
+        return $this->redirect(['tugas','id'=>$materi->parent->mapelPost->mapel_id,'materi_id'=>$tugas->materi_id,'jadwal_id'=>$jadwal_id]);
     }
 
     /**

@@ -14,6 +14,11 @@ $this->title = 'Tugas '.$mapel->mapel_nama.' '.$jadwal->kelas;
                 <h4><?=$materi->post_title?></h4>
                 
                 <p></p>
+                <form method="post">
+                <input type="hidden" name="_csrf" value="<?=Yii::$app->request->getCsrfToken()?>" />
+                <input type="hidden" name="id" value="<?=$id?>">
+                <input type="hidden" name="materi_id" value="<?=$materi_id?>">
+                <input type="hidden" name="jadwal_id" value="<?=$jadwal->jadwal_id?>">
                 <table class="table table-border table-striped">
                 <tr>
                     <td>#</td>
@@ -31,11 +36,14 @@ $this->title = 'Tugas '.$mapel->mapel_nama.' '.$jadwal->kelas;
                     <td><?= $j->post_title ?></td>
                     <td><?= $j->post_excerpt ?></td>
                     <td>
-                        <a href="<?= Url::to(['site/add-tugas','id'=>$id,'materi_id'=>$materi->id,'jadwal_id'=>$jadwal->jadwal_id,'soal_id'=>$j->id]) ?>" class="btn btn-primary" data-confirm="apakah anda yakin ingin menambahkan soal ini ke tugas ?" data-method="post"><i class="fas fa-plus"></i> Tambahkan Ke Tugas</a>
+                    <input type="checkbox" id="soal-<?=$key?>" name="soal[]" value="<?=$j->id?>">
+                    <label for="soal-<?=$key?>">Tambahkan Ke Tugas</label>
                     </td>
                 </tr>
                 <?php } ?>
                 </table>
+                <button class="btn btn-primary">Simpan</button>
+                </form>
             </div>
         </div>
 

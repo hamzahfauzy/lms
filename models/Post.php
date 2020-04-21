@@ -103,8 +103,8 @@ class Post extends \yii\db\ActiveRecord
     public function meta($key = false)
     {
         if(!$key)
-            return PostMeta::find()->where(['post_id'=>$this->id,'meta_key'=>$key])->one()->meta_value;
-        return PostMeta::find()->where(['post_id'=>$this->id])->all();
+            return PostMeta::find()->where(['post_id'=>$this->id])->all();
+        return PostMeta::find()->where(['post_id'=>$this->id,'meta_key'=>$key])->one()->meta_value;
         
     }
 }
