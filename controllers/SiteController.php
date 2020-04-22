@@ -327,7 +327,8 @@ class SiteController extends Controller
             // portrait orientation
             'orientation' => Pdf::ORIENT_PORTRAIT, 
             // stream to browser inline
-            'destination' => Pdf::DEST_BROWSER, 
+            // 'destination' => Pdf::DEST_BROWSER, 
+            // 'destination' => ['Pdf::DEST_FILE', '../../tmp'],
             // your html content input
             'content' => $content,  
             // format content from your own css file if needed or use the
@@ -337,7 +338,6 @@ class SiteController extends Controller
             'cssInline' => '.kv-heading-1{font-size:18px}', 
             // set mPDF properties on the fly
             'options' => ['title' => 'Panduan'],
-            'tempDir'=>Yii::getPathOfAlias('application.runtime'),
             // call mPDF methods on the fly
             'methods' => [ 
                 'SetHeader'=>[''], 
