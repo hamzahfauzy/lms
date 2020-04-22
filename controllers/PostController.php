@@ -266,9 +266,16 @@ class PostController extends Controller
             $fileName = $_FILES['file']['tmp_name'];
             $data = \moonland\phpexcel\Excel::import($fileName);
             $data = $data[0];
+            $mapel = TblMapel::findOne($_POST['id']);
+            $ids = [];
+            foreach($mapel->mapelPosts as $mapel_post)
+                if($mapel_post->post->post_as == 'Materi')
+                    $ids[] = $mapel_post->post_id;
+
             foreach($data as $d){
                 $model = new Post();
                 $model->post_author_id = Yii::$app->user->identity->guru_id;
+                $model->post_parent_id = $ids[($d['Topik']-1)];
                 $model->post_as = 'Soal';
                 $model->post_title = $d['Judul'];
                 $model->post_content = $d['Deskripsi'];
