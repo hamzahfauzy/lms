@@ -365,8 +365,16 @@ class PostController extends Controller
         foreach($topik->mapelPosts as $mapel_post)
             if($mapel_post->post->post_as == 'Materi')
                 $ids[] = $mapel_post->post_id;
-        $mapel = Post::find()->where(['in','id',$ids])->all();
-        return ArrayHelper::map($mapel,'id','post_title');
+        $mapel = Post::find()->where(['in','id',$ids])->orderBy(['post_order'=>SORT_ASC])->all();
+        $_mapel = [];
+        foreach($mapel as $key => $val)
+        {
+            $_mapel[] = [
+                'id' => $val->id,
+                'post_title' => ++$key.'. '.$val->post_title
+            ];
+        }
+        return ArrayHelper::map($_mapel,'id','post_title');
     }
 
     function strWordCut($string,$length,$end='....')

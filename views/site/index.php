@@ -33,6 +33,8 @@ $this->title = 'LMS Dashboard';
                     <td><?= $toHari($j->hari) ?></td>
                     <td><?= $j->jam ?></td>
                     <td>
+                    <a href="<?= Url::to(['site/export-panduan','id'=>$j->mapel_id]) ?>" target="_blank"><i class="fas fa-cloud-download-alt"></i> Panduan</a>
+                    |
                     <a href="<?= Url::to(['site/view-jadwal','id'=>$j->jadwal_id]) ?>"><i class="fas fa-eye"></i> View</a>
                     </td>
                 </tr>
@@ -56,7 +58,11 @@ $this->title = 'LMS Dashboard';
                 <tr>
                     <td><?= ++$key ?></td>
                     <td><?= $j->mapel_nama ?></td>
-                    <td><a href="<?= Url::to(['materi/index','id'=>$j->mapel_id]) ?>"><i class="fas fa-eye"></i> View</a></td>
+                    <td>
+                    <a href="<?= Url::to(['site/export-panduan','id'=>$j->mapel_id]) ?>" target="_blank"><i class="fas fa-cloud-download-alt"></i> Panduan</a>
+                    |
+                    <a href="<?= Url::to(['materi/index','id'=>$j->mapel_id]) ?>"><i class="fas fa-eye"></i> View</a>
+                    </td>
                 </tr>
                 <?php } ?>
                 </table>

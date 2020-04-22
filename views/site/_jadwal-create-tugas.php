@@ -1,6 +1,7 @@
 <?php
 use yii\helpers\Url;
 ?>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.css" rel="stylesheet" type="text/css">
 <h2>Buat Tugas</h2>
 <form method="post" action="<?= Url::to(['site/create-tugas'])?>">
     <input type="hidden" name="jadwal_id" value="<?= $_GET['id'] ?>">
@@ -17,19 +18,47 @@ use yii\helpers\Url;
         <label for="">Topik</label>
         <select name="category" class="form-control" required>
             <option value="">- Topik -</option>
-            <?php foreach($additionalModel as $topik){ ?>
-            <option value="<?=$topik->id?>"><?=$topik->post_title?></option>
+            <?php foreach($additionalModel as $key => $topik){ ?>
+            <option value="<?=$topik->id?>"><?=++$key ?>. <?=$topik->post_title?></option>
             <?php } ?>
         </select>
     </div>
     <div class="form-group">
         <label for="">Waktu Mulai</label>
-        <input name="meta[time_start]" type="datetime-local" class="form-control" required>
+        <input name="meta[time_start]" id="datetimepicker" readonly type="text" class="form-control" required>
     </div>
     <div class="form-group">
         <label for="">Waktu Selesai</label>
-        <input name="meta[time_end]" type="datetime-local" class="form-control" required>
+        <input name="meta[time_end]" id="datetimepicker1" readonly type="text" class="form-control" required>
     </div>
     <button class="btn btn-success">Simpan</button>
 </form>
-                
+<script src="<?=Url::to(['js/jquery-1.8.3.min.js'])?>"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.js"></script>
+<script type="text/javascript">
+var allowTimes = []
+for(i=0;i<24;i++)
+{
+    for(j=0;j<60;j++)
+    {
+        var _time = i+':'+j
+        allowTimes.push(_time)
+    }
+}
+$("#datetimepicker").datetimepicker({
+    format:'Y-m-d H:i',
+    allowTimes:allowTimes
+});
+$("#datetimepicker1").datetimepicker({
+    format:'Y-m-d H:i',
+    allowTimes:allowTimes
+});
+
+$("#datetimepicker").focus(function(){
+    $("#datetimepicker").datetimepicker('show') 
+})
+
+$("#datetimepicker1").focus(function(){
+    $("#datetimepicker1").datetimepicker('show') 
+})
+</script> 

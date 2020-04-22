@@ -85,6 +85,11 @@ class Post extends \yii\db\ActiveRecord
         return $this->hasMany(Post::className(), ['post_parent_id' => 'id']);
     }
 
+    public function submateri()
+    {
+        return $this->getSubPosts()->where(['post_as'=>'Sub Materi'])->all();
+    }
+
     public function getMapelPost()
     {
         return $this->hasOne(MapelPost::className(), ['post_id' => 'id']);
