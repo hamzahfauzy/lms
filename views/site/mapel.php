@@ -4,6 +4,7 @@
 use yii\helpers\Url;
 
 $this->title = 'Mata Pelajaran Admin';
+$this->params['breadcrumbs'][] = 'Mata Pelajaran';
 ?>
 <div class="site-index">
 

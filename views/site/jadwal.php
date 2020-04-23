@@ -4,6 +4,7 @@
 use yii\helpers\Url;
 
 $this->title = 'Jadwal';
+$this->params['breadcrumbs'][] = 'Jadwal';
 ?>
 <div class="site-index">
 

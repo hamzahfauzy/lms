@@ -4,6 +4,7 @@
 use yii\helpers\Url;
 
 $this->title = 'LMS Dashboard';
+$this->params['breadcrumbs'][] = 'Dashboard';
 ?>
 <div class="site-index">
 

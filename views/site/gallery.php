@@ -5,6 +5,7 @@ use yii\helpers\Url;
 
 
 $this->title = 'File Manager';
+$this->params['breadcrumbs'][] = 'File Manager';
 ?>
 <div class="site-index">
 
