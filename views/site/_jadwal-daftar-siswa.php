@@ -1,5 +1,6 @@
 <?php
 use yii\helpers\Url;
+$this->params['breadcrumbs'][] = 'Daftar Siswa';
 ?>
                 <h2>Daftar Siswa</h2>
                 <table class="table table-border table-striped">

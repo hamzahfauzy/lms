@@ -4,6 +4,7 @@
 use yii\helpers\Url;
 
 $this->title = $jadwal->mapel_nama.' '.$jadwal->kelas.', '.$toHari($jadwal->hari).' '.$jadwal->jam;
+$this->params['breadcrumbs'][] = 'Jadwal '.$jadwal->mapel_nama;
 ?>
 <div class="site-index">
 

@@ -1,5 +1,7 @@
 <?php
 use yii\helpers\Url;
+$this->params['breadcrumbs'][] = ['label'=>'Tugas','url'=>['view-jadwal','id'=>$_GET['id'],'page'=>'tugas']];
+$this->params['breadcrumbs'][] = 'Buat Tugas';
 ?>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.css" rel="stylesheet" type="text/css">
 <h2>Buat Tugas</h2>
