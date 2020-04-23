@@ -4,7 +4,9 @@
 use yii\helpers\Url;
 
 $this->title = 'Tugas '.$mapel->mapel_nama.' '.$jadwal->kelas;
-$this->params['breadcrumbs'][] = 'Tugas';
+$this->params['breadcrumbs'][] = 'Jadwal '.$mapel->mapel_nama;
+$this->params['breadcrumbs'][] = ['label'=>'Tugas','url'=>['site/view-jadwal','id'=>$jadwal->jadwal_id,'page'=>'tugas']];
+$this->params['breadcrumbs'][] = $materi->post_title;
 ?>
 <div class="site-index">
 
